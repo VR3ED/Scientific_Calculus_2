@@ -1,0 +1,5 @@
+DCT HomeMade test passed!
+DCT2 HomeMade test passed!
+DCT library test passed!
+DCT2 library test passed!
+TESTS COMPLETED
