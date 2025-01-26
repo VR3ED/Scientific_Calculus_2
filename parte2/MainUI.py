@@ -9,7 +9,7 @@ import ImageProcessor
 class App:
     def __init__(self, root):
         self.root = root
-        self.root.title("Algoritmo DCT2")
+        self.root.title("COMPRESSIONE DI IMMAGINI TRAMITE DCT2")
         self.root.geometry("800x780")  # Dimensione della finestra
 
         self.image_path = None  # Variabile per memorizzare il percorso dell'immagine
