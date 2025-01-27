@@ -27,22 +27,19 @@ def apply_dct2(blocks, d_threshold, block_size, logger, total_blocks):
         block_array = np.array(block)
         block_dct = dct(dct(block_array.T, norm='ortho').T, norm='ortho')
 
-        # Maschera di quantizzazione: crea matrice di booleani
-        # con valore true solo nelle posizioni < del parametro di threshold
-        mask = np.abs(np.add.outer(range(block_size), range(block_size))) < d_threshold
-
-        # Operazione che permette di mantenere solo i valori che corrispondono
-        # agli indici degli elementi della matrice
-        # di quantizzazione impostati a true
-        block_processed_threshold = block_dct * mask
+        # Maschera di quantizzazione: crea matrice di booleani                      ####### qui si fa il controllo per vedere se
+        # con valore true solo nelle posizioni < del parametro di threshold               # abbiamo i blocchi "gialli"
+        mask = np.abs(np.add.outer(range(block_size), range(block_size))) < d_threshold   # ossia i blocchi che sono sopra la 
+                                                                                          # diagonale "d"
+        # Operazione che permette di mantenere solo i valori che corrispondono            #
+        # agli indici degli elementi della matrice                                        # se non sono sopra la diagonale
+        # di quantizzazione impostati a true                                              # allora vengono moltiplicati per 0
+        block_processed_threshold = block_dct * mask                                      # tagliando quindi le frequenze
+                                                                                    ####### 
 
         blocks_processed_threshold.append(block_processed_threshold)
 
         log_message(logger, "✅ DCT2 " + str(idx + 1) + "/"+ str(total_blocks) +" processed")
-
-        # Aggiorna progress bar
-        #progress['value'] += 50 / total_blocks
-        #progress.update_idletasks()
 
     return blocks_processed_threshold
 
@@ -64,10 +61,6 @@ def apply_idct2(blocks_dct_quantized, logger, total_blocks):
         blocks_idct_rounded.append(block_idct_rounded.astype(np.uint8))
 
         log_message(logger, "✅ IDCT2 " + str(idx + 1) + "/"+ str(total_blocks) +" processed")
-
-        # Update progress bar
-        #progress['value'] += 50 / total_blocks
-        #progress.update_idletasks()
 
     return blocks_idct_rounded
 

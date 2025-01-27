@@ -3,7 +3,7 @@ from tkinter import filedialog, messagebox, ttk
 from PIL import Image, ImageTk
 import threading
 import os
-import ImageProcessor
+import ProcessImages
 
 
 class App:
@@ -76,7 +76,7 @@ class App:
         self.text_log = tk.Text(self.frame_log, wrap="word", height=10)
         self.text_log.pack(pady=5, fill="both", expand="yes")
 
-
+    # apre file dialog per selezionare un'immagine .bmp
     def choose_image(self):
         file_path = filedialog.askopenfilename(filetypes=[("BMP files", "*.bmp")])
         if file_path:
@@ -101,11 +101,13 @@ class App:
             self.image_size_label.config(text="")
             self.compressed_image_size_label.config(text="")
 
+    # Calcola la grandezza massima di F data immagine selezionata
     def calculate_max_F(self, image_path):
         with Image.open(image_path) as img:
             width, height = img.size
         return min(width, height)
 
+    # Mostra l'immagine caricata nell'interfaccia utente
     def display_image(self, image_path, label):
         image = Image.open(image_path)
         image.thumbnail((300, 300))  # Ridimensiona l'immagine per adattarla alla UI
@@ -113,13 +115,11 @@ class App:
         label.config(image=photo)
         label.image = photo  # Mantiene un riferimento all'immagine per evitare che venga eliminata dal garbage collector
 
-
-    # Verifica gli input e avvia la compressione
+    # Verifica gli input "F" e "d" ed avvia la compressione
     def process_inputs(self):
         try:
             # Recupero la grandezza delle finestrelle
             F = int(self.entry_F.get())
-
             # Controllo che la grandezza delle finestrelle sia valida
             if not self.max_F:
                 raise ValueError("Per favore seleziona un'immagine prima di procedere")
@@ -128,10 +128,9 @@ class App:
 
             # Recupero la soglia
             soglia = int(self.entry_threshold.get())
-
-            # Controllo che la soglia sia compresa tra 0 e 2F-2
-            if not (0 <= soglia <= (2 * F - 2)):
-                raise ValueError(f"La soglia deve essere compresa tra 0 e {2 * F - 2}")
+            # Controllo che la soglia sia compresa tra 1 e 2F-2
+            if not (0 < soglia <= (2 * F - 2)):
+                raise ValueError(f"La soglia deve essere compresa tra 1 e {2 * F - 2}")
 
             # Controllo che un'immagine sia stata selezionata
             if not self.image_path:
@@ -145,17 +144,15 @@ class App:
         except ValueError as e:
             messagebox.showerror("Errore di input", str(e))
 
-
     # Esegui la compressione dell'immagine
     def run_compression(self, image_path, F, soglia):
-        ImageProcessor.run_compression(image_path, F, soglia, self.text_log)
+        ProcessImages.run_compression(image_path, F, soglia, self.text_log)
         compressed_image_path = "compressed_image.bmp"
         if os.path.exists(compressed_image_path):
             file_size_bytes = os.path.getsize(compressed_image_path)
             file_size_kb = file_size_bytes / 1024.0  # Converti da byte a kilobyte
         self.log_message("✅ Compression completated")
         self.log_message("New ompressed image size: " + str(file_size_kb) + " KB")
-
 
     # Visualizza la matrice di compressione 
     def visualize_matrix(self):
@@ -174,7 +171,6 @@ class App:
 
         except ValueError:
             messagebox.showerror("Errore", "Inserisci valori validi per F e D.")
-
 
     # Print di una stringa sul LOG
     def log_message(self,message):
