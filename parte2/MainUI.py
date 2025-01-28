@@ -134,8 +134,8 @@ class App:
             # Recupero la soglia di compressione (d)
             d = int(self.entry_threshold.get())
             # Controllo che la soglia sia compresa tra 1 e 2F-2
-            if not (0 < d <= (2 * F - 2)):
-                raise ValueError(f"La soglia di compressione deve essere compresa tra 1 e {2 * F - 2}")
+            if not (0 <= d <= (2 * F - 2)):
+                raise ValueError(f"La soglia di compressione deve essere compresa tra 0 e {2 * F - 2}")
 
             # Visualizza la matrice di compressione
             self.visualize_matrix()
@@ -165,7 +165,7 @@ class App:
             cell_size = 300 // f
             for i in range(f):
                 for j in range(f):
-                    color = "red" if (f - (i + j))-1 <= f-d else "yellow"
+                    color = "red" if (f - (i + j)) <= f-d else "yellow"
                     x0, y0 = i * cell_size, j * cell_size
                     x1, y1 = x0 + cell_size, y0 + cell_size
                     self.canvas.create_rectangle(x0, y0, x1, y1, fill=color, outline="black")
