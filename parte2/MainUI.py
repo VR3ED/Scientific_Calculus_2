@@ -123,24 +123,25 @@ class App:
             # Controllo che la grandezza delle finestrelle sia valida
             if not self.max_F:
                 raise ValueError("Per favore seleziona un'immagine prima di procedere")
-            if F <= 0 or F > self.max_F:
-                raise ValueError(f"La grandezza delle finestrelle deve essere compresa tra 1 e {self.max_F}")
-
-            # Recupero la soglia
-            soglia = int(self.entry_threshold.get())
-            # Controllo che la soglia sia compresa tra 1 e 2F-2
-            if not (0 < soglia <= (2 * F - 2)):
-                raise ValueError(f"La soglia deve essere compresa tra 1 e {2 * F - 2}")
-
             # Controllo che un'immagine sia stata selezionata
             if not self.image_path:
                 raise ValueError("Per favore seleziona un'immagine .bmp prima di procedere")
+
+            # Controllo che la grandezza delle finestrelle sia compresa tra 1 e max_F
+            if F <= 0 or F > self.max_F:
+                raise ValueError(f"La grandezza delle finestrelle deve essere compresa tra 1 e {self.max_F}")
+
+            # Recupero la soglia di compressione (d)
+            d = int(self.entry_threshold.get())
+            # Controllo che la soglia sia compresa tra 1 e 2F-2
+            if not (0 < d <= (2 * F - 2)):
+                raise ValueError(f"La soglia di compressione deve essere compresa tra 1 e {2 * F - 2}")
 
             # Visualizza la matrice di compressione
             self.visualize_matrix()
 
             # Esegui la compressione in un thread separato
-            threading.Thread(target=self.run_compression, args=(self.image_path, F, soglia)).start()
+            threading.Thread(target=self.run_compression, args=(self.image_path, F, d)).start()
         except ValueError as e:
             messagebox.showerror("Errore di input", str(e))
 
@@ -152,7 +153,7 @@ class App:
             file_size_bytes = os.path.getsize(compressed_image_path)
             file_size_kb = file_size_bytes / 1024.0  # Converti da byte a kilobyte
         self.log_message("✅ Compression completated")
-        self.log_message("New ompressed image size: " + str(file_size_kb) + " KB")
+        self.log_message("New compressed image size: " + str(file_size_kb) + " KB")
 
     # Visualizza la matrice di compressione 
     def visualize_matrix(self):

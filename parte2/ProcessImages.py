@@ -29,7 +29,7 @@ def apply_dct2(blocks, d_threshold, block_size, logger, total_blocks):
 
         # Maschera di quantizzazione: crea matrice di booleani                      ####### qui si fa il controllo per vedere se
         # con valore true solo nelle posizioni < del parametro di threshold               # abbiamo i blocchi "gialli"
-        mask = np.abs(np.add.outer(range(block_size), range(block_size))) < d_threshold   # ossia i blocchi che sono sopra la 
+        mask = np.abs(np.add.outer(range(block_size), range(block_size))) < d_threshold-1 # ossia i blocchi che sono sopra la 
                                                                                           # diagonale "d"
         # Operazione che permette di mantenere solo i valori che corrispondono            #
         # agli indici degli elementi della matrice                                        # se non sono sopra la diagonale
