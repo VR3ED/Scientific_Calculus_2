@@ -7,21 +7,21 @@ import threading
 from mpl_toolkits.mplot3d import Axes3D
 
 
-def run_compression(image_path, block_size, d_threshold, logger):
+def run_compression(image_path, F_size, d_threshold, logger):
     try:
-        blocks = generate_blocks(image_path, block_size)
+        blocks = generate_blocks(image_path, F_size)
         total_blocks = len(blocks)
 
-        blocks_processed_dct = apply_dct2(blocks, d_threshold, block_size, logger, total_blocks)
+        blocks_processed_dct = apply_dct2(blocks, d_threshold, F_size, logger, total_blocks)
         blocks_idct_rounded = apply_idct2(blocks_processed_dct, logger, total_blocks)
 
-        save_compressed_image(blocks_idct_rounded, image_path, block_size)
+        save_compressed_image(blocks_idct_rounded, image_path, F_size)
 
     except Exception as e:
         print("Error during compression:", str(e))
 
 
-def apply_dct2(blocks, d_threshold, block_size, logger, total_blocks):
+def apply_dct2(blocks, d_threshold, F_size, logger, total_blocks):
     blocks_processed_threshold = []
     for idx, block in enumerate(blocks):
         block_array = np.array(block)
@@ -29,7 +29,7 @@ def apply_dct2(blocks, d_threshold, block_size, logger, total_blocks):
 
         # Maschera di quantizzazione: crea matrice di booleani                      ####### qui si fa il controllo per vedere se
         # con valore true solo nelle posizioni < del parametro di threshold               # abbiamo i blocchi "gialli"
-        mask = np.abs(np.add.outer(range(block_size), range(block_size))) < d_threshold   # ossia i blocchi che sono sopra la 
+        mask = np.abs(np.add.outer(range(F_size), range(F_size))) < d_threshold           # ossia i blocchi che sono sopra la 
                                                                                           # diagonale "d"
         # Operazione che permette di mantenere solo i valori che corrispondono            #
         # agli indici degli elementi della matrice                                        # se non sono sopra la diagonale
@@ -132,13 +132,14 @@ def generate_blocks(image_path, block_size):
             # estrai blocchi dall'immagine
             for j in range(num_blocks_vertical):
                 for i in range(num_blocks_horizontal):
-                    # calcola le coordinate del blocco: x0 e y0 alto a sx - x1 e y1 basso a dx
+                    # calcola le coordinate del blocco: 
+                    # x0 e y0 alto a sx - x1 e y1 basso a dx
                     x0 = i * block_size
                     y0 = j * block_size
                     x1 = x0 + block_size
                     y1 = y0 + block_size
 
-                    # Estrai il blocco dall'immagine passandogli le coordinate calcolate
+                    # Estrai il blocco dall'immagine 
                     block = img_gray.crop((x0, y0, x1, y1))
                     blocks.append(block)
 

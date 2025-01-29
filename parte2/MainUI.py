@@ -146,8 +146,8 @@ class App:
             messagebox.showerror("Errore di input", str(e))
 
     # Esegui la compressione dell'immagine
-    def run_compression(self, image_path, F, soglia):
-        ProcessImages.run_compression(image_path, F, soglia, self.text_log)
+    def run_compression(self, image_path, F, d):
+        ProcessImages.run_compression(image_path, F, d, self.text_log)
         compressed_image_path = "compressed_image.bmp"
         if os.path.exists(compressed_image_path):
             file_size_bytes = os.path.getsize(compressed_image_path)
