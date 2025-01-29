@@ -50,12 +50,14 @@ def apply_idct2(blocks_dct_quantized, logger, total_blocks):
         # Applica l'IDCT (Inverse Discrete Cosine Transform) al blocco quantizzato
         # La trasformazione è eseguita prima sulle colonne e poi sulle righe
         block_idct = idct(idct(block_dct_quantized.T, norm='ortho').T, norm='ortho')
+
         # Arrotonda i valori del blocco IDCT ai numeri interi più vicini
         block_idct_rounded = np.round(block_idct)
         # Imposta i valori negativi a 0 e i valori superiori a 255
         # a 255 per evitare valori di pixel non validi
         block_idct_rounded[block_idct_rounded < 0] = 0
         block_idct_rounded[block_idct_rounded > 255] = 255
+
         # Aggiunge il blocco IDCT arrotondato alla lista,
         # convertendolo in tipo uint8
         blocks_idct_rounded.append(block_idct_rounded.astype(np.uint8))
@@ -75,8 +77,9 @@ def save_compressed_image(blocks_idct_rounded, original_image_path, block_size):
 
             # Calcolo del numero di blocchi orizzontali
             num_blocks_horizontal = img_width // block_size
+            num_blocks_vertical = img_height // block_size
             # Ciclo attraverso i blocchi verticali dell'immagine
-            for j in range(img_height // block_size):
+            for j in range(num_blocks_vertical):
                 for i in range(num_blocks_horizontal):
                     # Calcolo delle coordinate del blocco
                     x0 = i * block_size
